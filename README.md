@@ -38,7 +38,7 @@ Stmt ::= let i e | i = e | while c s* | print e
 
 ```
 type File = Num*
-type Memory = Ide -> Num
+type Memory = Ide -> Num  (in JS, a Map; in Python a dict)
 type State = Memory x File
 
 P: Prog -> File
@@ -46,12 +46,12 @@ E: Exp -> Memory -> Num
 S: Stmt -> State -> State
 C: Cond -> Memory -> Bool
 
-P [[s*]] = ______________
+P [[s*]] = S*[[s*]]({}, [])
 
 S [[let i e]] (m,o) = ______________
 S [[fun i i* e]] (m,o) = ______________
 S [[i = e]] (m,o) = ______________
-S [[print e]] (m,o) = ______________
+S [[print e]] (m,o) = (m, o + E [[e]] m)
 S [[while c do s*]] (m,o) = ______________
 
 E [[n]] m = n
