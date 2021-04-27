@@ -13,6 +13,8 @@ const P = (program) => {
 
 const S = (statement) => ([memory, output]) => {
   if (statement.constructor === VariableDeclaration) {
+    let { variable, initializer } = statement
+    return [{ ...memory, [variable]: E(initializer)(memory) }, output]
   } else if (statement.constructor === PrintStatement) {
     let { argument } = statement
     return [memory, [...output, E(argument)(memory)]]
@@ -158,4 +160,13 @@ const or = (x, y) => new Binary("||", x, y)
 //   ])
 // )
 
-console.log(P(program([vardec("x", 3), print("x")])))
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      vardec("y", plus("x", 10)),
+      print("x"),
+      print("y"),
+    ])
+  )
+)
