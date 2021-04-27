@@ -1,0 +1,21 @@
+{
+  "name": "bella-interpreter",
+  "version": "1.0.0",
+  "description": "Bella is a simple programming language designed in a Programming Language Semantics class.",
+  "main": "bella.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rtoal/bella-interpreter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rtoal/bella-interpreter/issues"
+  },
+  "homepage": "https://github.com/rtoal/bella-interpreter#readme"
+}
