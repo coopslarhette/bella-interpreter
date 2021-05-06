@@ -79,10 +79,10 @@ const C = (condition) => (memory) => {
   } else if (condition.constructor === Unary) {
     const { op, operand } = condition
     return !C(operand)(memory)
+  } else if (condition.constructor === Conditional) {
+    const { test, first, second } = condition
+    return C(test)(memory) ? first : second
   }
-  // FOR YOU: HANDLE CALLS
-
-  // FOR YOU: HANDLE CONDITIONAL EXPRESSION (?:)
 }
 
 class Program {
@@ -121,6 +121,12 @@ class Assignment {
   }
 }
 
+class Conditional {
+  constructor(test, first, second) {
+    Object.assign(this, { test, first, second })
+  }
+}
+
 class Binary {
   constructor(op, left, right) {
     Object.assign(this, { op, left, right })
@@ -137,6 +143,7 @@ const program = (s) => new Program(s)
 const vardec = (i, e) => new VariableDeclaration(i, e)
 const print = (e) => new PrintStatement(e)
 const whileLoop = (c, b) => new WhileStatement(c, b)
+const conditional = (c, f, s) => new Conditional(c, f, s)
 const plus = (x, y) => new Binary("+", x, y)
 const minus = (x, y) => new Binary("-", x, y)
 const times = (x, y) => new Binary("*", x, y)
@@ -152,7 +159,7 @@ const and = (x, y) => new Binary("&&", x, y)
 const or = (x, y) => new Binary("||", x, y)
 
 // console.log(interpret(program([vardec("x", 2), print("x")])))
-
+//
 // console.log(
 //   program([
 //     vardec("x", 3),
@@ -166,7 +173,7 @@ console.log(
       vardec("x", 3),
       vardec("y", plus("x", 10)),
       print("x"),
-      print("y"),
+      print("y")
     ])
   )
 )
