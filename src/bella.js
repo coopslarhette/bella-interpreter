@@ -4,14 +4,11 @@ function interpret(program) {
 
 const P = (program) => {
   let statements = program.body
-  let w = [{}, []]
-  for (let s of statements) {
-    w = S(s)(w)
-  }
-  return w[1]
+  return statements.reduce(([memory, output], s) => S(s)([memory, output]), [{}, []])[1]
 }
 
 const S = (statement) => ([memory, output]) => {
+  console.log(memory)
   if (statement.constructor === VariableDeclaration) {
     let { variable, initializer } = statement
     return [{ ...memory, [variable]: E(initializer)(memory) }, output]
@@ -19,7 +16,12 @@ const S = (statement) => ([memory, output]) => {
     let { argument } = statement
     return [memory, [...output, E(argument)(memory)]]
   } else if (statement.constructor === Assignment) {
+    let { target, source } = statement
+    return [{ ...memory, [target]: E(source)(memory) }, output]
   } else if (statement.constructor === WhileStatement) {
+    let { test, body } = statement
+    return C(test)(memory) ?
+      S(statement)(body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])) : ([memory, output])
   } else if (statement.constructor === FunctionDeclaration) {
   }
 }
@@ -51,6 +53,10 @@ const E = (expression) => (memory) => {
   } else if (expression.constructor === Conditional) {
     const { test, first, second } = expression
     return C(test)(memory) ? E(first)(memory) : E(second)(memory)
+  } else if (expression.constructor === Call) {
+    // const { name, args } = expression
+    // const
+    // functionMemory = { ...memory }
   }
 }
 
@@ -123,8 +129,13 @@ class Assignment {
 
 class Conditional {
   constructor(test, first, second) {
-
     Object.assign(this, { test, first, second })
+  }
+}
+
+class Call {
+  constructor(name, args) {
+    Object.assign(this, { name, args })
   }
 }
 
@@ -145,6 +156,8 @@ const vardec = (i, e) => new VariableDeclaration(i, e)
 const print = (e) => new PrintStatement(e)
 const whileLoop = (c, b) => new WhileStatement(c, b)
 const conditional = (c, f, s) => new Conditional(c, f, s)
+const assign = (t, s) => new Assignment(t, s)
+const call = (n, a) => new Call(n, a)
 const plus = (x, y) => new Binary("+", x, y)
 const minus = (x, y) => new Binary("-", x, y)
 const times = (x, y) => new Binary("*", x, y)
@@ -161,37 +174,39 @@ const or = (x, y) => new Binary("||", x, y)
 
 // console.log(interpret(program([vardec("x", 2), print("x")])))
 //
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      whileLoop(less("x", 4), [print("x"), assign("x", plus("x", 1))])
+    ])
+  )
+)
+
 // console.log(
-//   program([
-//     vardec("x", 3),
-//     whileLoop(less("x", 10), [print("x"), assign("x", plus("x", 2))]),
-//   ])
+//   P(
+//     program([
+//       vardec("x", 3),
+//       vardec("y", plus("x", 10)),
+//       print("x"),
+//       print("y"),
+//       vardec("z",
+//         conditional(
+//           eq(1, 1), "x", "y"
+//         )
+//       ),
+//       print("z")
+//     ])
+//   )
 // )
-
-console.log(
-  P(
-    program([
-      vardec("x", 3),
-      vardec("y", plus("x", 10)),
-      print("x"),
-      print("y"),
-      vardec("z",
-        conditional(
-          eq(1, 1), "x", "y"
-        )
-      ),
-      print("z")
-    ])
-  )
-)
-
-console.log(
-  P(
-    program([
-      vardec("x", 3),
-      vardec("y", plus("x", 10)),
-      print("x"),
-      print("y")
-    ])
-  )
-)
+//
+// console.log(
+//   P(
+//     program([
+//       vardec("x", 3),
+//       vardec("y", plus("x", 10)),
+//       print("x"),
+//       print("y")
+//     ])
+//   )
+// )
