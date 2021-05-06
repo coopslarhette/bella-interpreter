@@ -1,10 +1,11 @@
+const evaluateBody = (body) => ([memory, output]) => body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
+
 function interpret(program) {
   return P(program)
 }
 
 const P = (program) => {
-  let statements = program.body
-  return statements.reduce(([memory, output], s) => S(s)([memory, output]), [{}, []])[1]
+  return evaluateBody(program.body)([{}, []])[1]
 }
 
 const S = (statement) => ([memory, output]) => {
@@ -21,7 +22,7 @@ const S = (statement) => ([memory, output]) => {
   } else if (statement.constructor === WhileStatement) {
     let { test, body } = statement
     return C(test)(memory) ?
-      S(statement)(body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])) : ([memory, output])
+      S(statement)(evaluateBody(body)([memory, output])) : ([memory, output])
   } else if (statement.constructor === FunctionDeclaration) {
   }
 }
