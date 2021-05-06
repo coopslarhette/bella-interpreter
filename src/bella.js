@@ -1,15 +1,14 @@
-const evaluateBody = (body) => ([memory, output]) => body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
+const body2State = (body) => ([memory, output]) => body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
 
 function interpret(program) {
   return P(program)
 }
 
 const P = (program) => {
-  return evaluateBody(program.body)([{}, []])[1]
+  return body2State(program.body)([{}, []])[1]
 }
 
 const S = (statement) => ([memory, output]) => {
-  console.log(memory)
   if (statement.constructor === VariableDeclaration) {
     let { variable, initializer } = statement
     return [{ ...memory, [variable]: E(initializer)(memory) }, output]
@@ -22,8 +21,10 @@ const S = (statement) => ([memory, output]) => {
   } else if (statement.constructor === WhileStatement) {
     let { test, body } = statement
     return C(test)(memory) ?
-      S(statement)(evaluateBody(body)([memory, output])) : ([memory, output])
+      S(statement)(body2State(body)([memory, output])) : ([memory, output])
   } else if (statement.constructor === FunctionDeclaration) {
+    let { name, parameters, body } = statement
+    return [{ ...memory, [name]: [parameters, body] }, output]
   }
 }
 
@@ -55,9 +56,13 @@ const E = (expression) => (memory) => {
     const { test, first, second } = expression
     return C(test)(memory) ? E(first)(memory) : E(second)(memory)
   } else if (expression.constructor === Call) {
-    // const { name, args } = expression
-    // const
-    // functionMemory = { ...memory }
+    const { name, args } = expression
+    const [parameters, body] = E(name)(memory)
+    const functionScopedMemory = parameters.reduce((m, parameterName, index) => ({
+      ...m,
+      [parameterName]: args[index]
+    }), memory)
+    return E(body)(functionScopedMemory)
   }
 }
 
@@ -173,8 +178,14 @@ const greatereq = (x, y) => new Binary(">=", x, y)
 const and = (x, y) => new Binary("&&", x, y)
 const or = (x, y) => new Binary("||", x, y)
 
-// console.log(interpret(program([vardec("x", 2), print("x")])))
-//
+console.log(interpret(program([vardec("x", 2), print("x")])))
+
+console.log(interpret(program([
+    vardec("x", 2),
+    print(conditional(noteq(-3, 1), "x", 1))
+  ]
+)))
+
 console.log(
   P(
     program([
@@ -184,30 +195,39 @@ console.log(
   )
 )
 
-// console.log(
-//   P(
-//     program([
-//       vardec("x", 3),
-//       vardec("y", plus("x", 10)),
-//       print("x"),
-//       print("y"),
-//       vardec("z",
-//         conditional(
-//           eq(1, 1), "x", "y"
-//         )
-//       ),
-//       print("z")
-//     ])
-//   )
-// )
-//
-// console.log(
-//   P(
-//     program([
-//       vardec("x", 3),
-//       vardec("y", plus("x", 10)),
-//       print("x"),
-//       print("y")
-//     ])
-//   )
-// )
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      whileLoop(less("x", 5), [print("x"), assign("x", plus("x", 1))])
+    ])
+  )
+)
+
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      vardec("y", plus("x", 10)),
+      print("x"),
+      print("y"),
+      vardec("z",
+        conditional(
+          eq(1, 1), "x", "y"
+        )
+      ),
+      print("z")
+    ])
+  )
+)
+
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      vardec("y", plus("x", 10)),
+      print("x"),
+      print("y")
+    ])
+  )
+)
