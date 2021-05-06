@@ -166,6 +166,7 @@ const program = (s) => new Program(s)
 const vardec = (i, e) => new VariableDeclaration(i, e)
 const print = (e) => new PrintStatement(e)
 const whileLoop = (c, b) => new WhileStatement(c, b)
+const funcdec = (n, p, b) => new FunctionDeclaration(n, p, b)
 const conditional = (c, f, s) => new Conditional(c, f, s)
 const assign = (t, s) => new Assignment(t, s)
 const call = (n, a) => new Call(n, a)
@@ -183,10 +184,44 @@ const greatereq = (x, y) => new Binary('>=', x, y)
 const and = (x, y) => new Binary('&&', x, y)
 const or = (x, y) => new Binary('||', x, y)
 
+// [ 2 ]
+console.log(
+  interpret(
+    program([
+      funcdec('difference', ['x', 'y'], minus('x', 'y')),
+      print(call('difference', [3, 1])),
+    ])
+  )
+)
+
 console.log(interpret(program([vardec('x', 2), print('x')])))
 
+// prints six 2's
 console.log(
-  interpret(program([vardec('x', 2), print(conditional(noteq(-3, 1), 'x', 1))]))
+  interpret(
+    program([
+      vardec('x', 2),
+      print(conditional(noteq(-3, 1), 'x', 1)),
+      print(conditional(lesseq(-3, 1), 'x', 1)),
+      print(conditional(greater(1, -3), 'x', 1)),
+      print(conditional(greatereq(1, -3), 'x', 1)),
+      print(conditional(and(greatereq(1, -3), greater(1, -3)), 'x', 1)),
+      print(conditional(or(greatereq(1, -3), greater(1, -3)), 'x', 1)),
+    ])
+  )
+)
+// [ 3, 10, 1, 25 ]
+
+console.log(
+  interpret(
+    program([
+      vardec('x', 2),
+      print(minus(5, 2)),
+      print(times(5, 2)),
+      print(remainder(5, 2)),
+      print(power(5, 2)),
+    ])
+  )
 )
 
 console.log(
