@@ -48,11 +48,11 @@ C: Cond -> Memory -> Bool
 
 P [[s*]] = S*[[s*]]({}, [])
 
-S [[let i e]] (m,o) = ______________
-S [[fun i i* e]] (m,o) = ______________
-S [[i = e]] (m,o) = ______________
+S [[let i e]] (m,o) = (m[E [[e]] m / i], o)
+S [[fun i i* e]] (m,o) = (m[(i*,e) / i], o)
+S [[i = e]] (m,o) = (m[E [[e]] m / i], o)
 S [[print e]] (m,o) = (m, o + E [[e]] m)
-S [[while c do s*]] (m,o) = ______________
+S [[while c do s*]] (m,o) = if C [[c]] m = F then (m,o) else (S [[while c do s*]]) (S* [[s*]] (m,o))
 
 E [[n]] m = n
 E [[i]] m = m i
@@ -63,8 +63,8 @@ E [[e1 / e2]] m = E [[e1]] m / E [[e2]] m
 E [[e1 % e2]] m = E [[e1]] m % E [[e2]] m
 E [[e1 ** e2]] m = E [[e1]] m ** E [[e2]] m
 E [[- e]] m = - E [[e]] m
-E [[i e*]] m = ______________
-E [[c ? e1 : e2]] m = ______________
+E [[i e*]] m = let (i*, e) = E [[i] m in E [[e]] m [e* / i*]
+E [[c ? e1 : e2]] m = if C [[c]] m = T then E [[e1]] m else E [[e2]] m
 
 C [[true]] m = T
 C [[false]] m = F
