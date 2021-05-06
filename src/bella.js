@@ -48,6 +48,9 @@ const E = (expression) => (memory) => {
       case "**":
         return E(left)(memory) ** E(right)(memory)
     }
+  } else if (expression.constructor === Conditional) {
+    const { test, first, second } = expression
+    return C(test)(memory) ? E(first)(memory) : E(second)(memory)
   }
 }
 
@@ -79,9 +82,6 @@ const C = (condition) => (memory) => {
   } else if (condition.constructor === Unary) {
     const { op, operand } = condition
     return !C(operand)(memory)
-  } else if (condition.constructor === Conditional) {
-    const { test, first, second } = condition
-    return C(test)(memory) ? first : second
   }
 }
 
@@ -123,6 +123,7 @@ class Assignment {
 
 class Conditional {
   constructor(test, first, second) {
+
     Object.assign(this, { test, first, second })
   }
 }
@@ -166,6 +167,23 @@ const or = (x, y) => new Binary("||", x, y)
 //     whileLoop(less("x", 10), [print("x"), assign("x", plus("x", 2))]),
 //   ])
 // )
+
+console.log(
+  P(
+    program([
+      vardec("x", 3),
+      vardec("y", plus("x", 10)),
+      print("x"),
+      print("y"),
+      vardec("z",
+        conditional(
+          eq(1, 1), "x", "y"
+        )
+      ),
+      print("z")
+    ])
+  )
+)
 
 console.log(
   P(
