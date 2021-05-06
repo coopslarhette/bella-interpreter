@@ -1,4 +1,5 @@
-const body2State = (body) => ([memory, output]) => body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
+const body2State = (body) => ([memory, output]) =>
+  body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
 
 function interpret(program) {
   return P(program)
@@ -20,8 +21,9 @@ const S = (statement) => ([memory, output]) => {
     return [{ ...memory, [target]: E(source)(memory) }, output]
   } else if (statement.constructor === WhileStatement) {
     let { test, body } = statement
-    return C(test)(memory) ?
-      S(statement)(body2State(body)([memory, output])) : ([memory, output])
+    return C(test)(memory)
+      ? S(statement)(body2State(body)([memory, output]))
+      : [memory, output]
   } else if (statement.constructor === FunctionDeclaration) {
     let { name, parameters, body } = statement
     return [{ ...memory, [name]: [parameters, body] }, output]
@@ -29,9 +31,9 @@ const S = (statement) => ([memory, output]) => {
 }
 
 const E = (expression) => (memory) => {
-  if (typeof expression === "number") {
+  if (typeof expression === 'number') {
     return expression
-  } else if (typeof expression == "string") {
+  } else if (typeof expression == 'string') {
     const i = expression
     return memory[i]
   } else if (expression.constructor === Unary) {
@@ -39,17 +41,17 @@ const E = (expression) => (memory) => {
   } else if (expression.constructor === Binary) {
     const { op, left, right } = expression
     switch (op) {
-      case "+":
+      case '+':
         return E(left)(memory) + E(right)(memory)
-      case "-":
+      case '-':
         return E(left)(memory) - E(right)(memory)
-      case "*":
+      case '*':
         return E(left)(memory) * E(right)(memory)
-      case "/":
+      case '/':
         return E(left)(memory) / E(right)(memory)
-      case "%":
+      case '%':
         return E(left)(memory) % E(right)(memory)
-      case "**":
+      case '**':
         return E(left)(memory) ** E(right)(memory)
     }
   } else if (expression.constructor === Conditional) {
@@ -58,10 +60,13 @@ const E = (expression) => (memory) => {
   } else if (expression.constructor === Call) {
     const { name, args } = expression
     const [parameters, body] = E(name)(memory)
-    const functionScopedMemory = parameters.reduce((m, parameterName, index) => ({
-      ...m,
-      [parameterName]: args[index]
-    }), memory)
+    const functionScopedMemory = parameters.reduce(
+      (m, parameterName, index) => ({
+        ...m,
+        [parameterName]: args[index],
+      }),
+      memory
+    )
     return E(body)(functionScopedMemory)
   }
 }
@@ -74,21 +79,21 @@ const C = (condition) => (memory) => {
   } else if (condition.constructor === Binary) {
     const { op, left, right } = condition
     switch (op) {
-      case "==":
+      case '==':
         return E(left)(memory) === E(right)(memory)
-      case "!=":
+      case '!=':
         return E(left)(memory) !== E(right)(memory)
-      case "<":
+      case '<':
         return E(left)(memory) < E(right)(memory)
-      case "<=":
+      case '<=':
         return E(left)(memory) <= E(right)(memory)
-      case ">":
+      case '>':
         return E(left)(memory) >= E(right)(memory)
-      case ">=":
+      case '>=':
         return E(left)(memory) >= E(right)(memory)
-      case "&&":
+      case '&&':
         return C(left)(memory) && C(right)(memory)
-      case "||":
+      case '||':
         return C(left)(memory) || C(right)(memory)
     }
   } else if (condition.constructor === Unary) {
@@ -164,33 +169,31 @@ const whileLoop = (c, b) => new WhileStatement(c, b)
 const conditional = (c, f, s) => new Conditional(c, f, s)
 const assign = (t, s) => new Assignment(t, s)
 const call = (n, a) => new Call(n, a)
-const plus = (x, y) => new Binary("+", x, y)
-const minus = (x, y) => new Binary("-", x, y)
-const times = (x, y) => new Binary("*", x, y)
-const remainder = (x, y) => new Binary("%", x, y)
-const power = (x, y) => new Binary("**", x, y)
-const eq = (x, y) => new Binary("==", x, y)
-const noteq = (x, y) => new Binary("!=", x, y)
-const less = (x, y) => new Binary("<", x, y)
-const lesseq = (x, y) => new Binary("<=", x, y)
-const greater = (x, y) => new Binary(">", x, y)
-const greatereq = (x, y) => new Binary(">=", x, y)
-const and = (x, y) => new Binary("&&", x, y)
-const or = (x, y) => new Binary("||", x, y)
+const plus = (x, y) => new Binary('+', x, y)
+const minus = (x, y) => new Binary('-', x, y)
+const times = (x, y) => new Binary('*', x, y)
+const remainder = (x, y) => new Binary('%', x, y)
+const power = (x, y) => new Binary('**', x, y)
+const eq = (x, y) => new Binary('==', x, y)
+const noteq = (x, y) => new Binary('!=', x, y)
+const less = (x, y) => new Binary('<', x, y)
+const lesseq = (x, y) => new Binary('<=', x, y)
+const greater = (x, y) => new Binary('>', x, y)
+const greatereq = (x, y) => new Binary('>=', x, y)
+const and = (x, y) => new Binary('&&', x, y)
+const or = (x, y) => new Binary('||', x, y)
 
-console.log(interpret(program([vardec("x", 2), print("x")])))
+console.log(interpret(program([vardec('x', 2), print('x')])))
 
-console.log(interpret(program([
-    vardec("x", 2),
-    print(conditional(noteq(-3, 1), "x", 1))
-  ]
-)))
+console.log(
+  interpret(program([vardec('x', 2), print(conditional(noteq(-3, 1), 'x', 1))]))
+)
 
 console.log(
   P(
     program([
-      vardec("x", 3),
-      whileLoop(less("x", 4), [print("x"), assign("x", plus("x", 1))])
+      vardec('x', 3),
+      whileLoop(less('x', 4), [print('x'), assign('x', plus('x', 1))]),
     ])
   )
 )
@@ -198,8 +201,8 @@ console.log(
 console.log(
   P(
     program([
-      vardec("x", 3),
-      whileLoop(less("x", 5), [print("x"), assign("x", plus("x", 1))])
+      vardec('x', 3),
+      whileLoop(less('x', 5), [print('x'), assign('x', plus('x', 1))]),
     ])
   )
 )
@@ -207,16 +210,12 @@ console.log(
 console.log(
   P(
     program([
-      vardec("x", 3),
-      vardec("y", plus("x", 10)),
-      print("x"),
-      print("y"),
-      vardec("z",
-        conditional(
-          eq(1, 1), "x", "y"
-        )
-      ),
-      print("z")
+      vardec('x', 3),
+      vardec('y', plus('x', 10)),
+      print('x'),
+      print('y'),
+      vardec('z', conditional(eq(1, 1), 'x', 'y')),
+      print('z'),
     ])
   )
 )
@@ -224,10 +223,10 @@ console.log(
 console.log(
   P(
     program([
-      vardec("x", 3),
-      vardec("y", plus("x", 10)),
-      print("x"),
-      print("y")
+      vardec('x', 3),
+      vardec('y', plus('x', 10)),
+      print('x'),
+      print('y'),
     ])
   )
 )

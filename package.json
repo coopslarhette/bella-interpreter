@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/rtoal/bella-interpreter/issues"
   },
-  "homepage": "https://github.com/rtoal/bella-interpreter#readme"
+  "homepage": "https://github.com/rtoal/bella-interpreter#readme",
+  "dependencies": {
+    "prettier": "^2.2.1"
+  }
 }
