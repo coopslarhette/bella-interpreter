@@ -184,7 +184,7 @@ export const greatereq = (x, y) => new Binary('>=', x, y)
 export const and = (x, y) => new Binary('&&', x, y)
 export const or = (x, y) => new Binary('||', x, y)
 
-// [ 2 ]
+// prints [ 2 ]
 console.log(
   interpret(
     program([
@@ -194,6 +194,7 @@ console.log(
   )
 )
 
+// prints [ 2 ]
 console.log(interpret(program([vardec('x', 2), print('x')])))
 
 // prints six 2's
