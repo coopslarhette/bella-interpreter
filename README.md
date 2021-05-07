@@ -149,10 +149,10 @@ const and = (x, y) => new Binary('&&', x, y)
 const or = (x, y) => new Binary('||', x, y)
 ```
 
-Some examples use of the interpreter:
+Some examples use of the interpreter (more examples/tests in [bella.js](src/bella.js)):
 
 ```javascript
-// [ 2 ]
+// prints [ 2 ]
 console.log(
   interpret(
     program([
@@ -162,6 +162,7 @@ console.log(
   )
 )
 
+// prints [ 2 ]
 console.log(interpret(program([vardec('x', 2), print('x')])))
 
 // prints six 2's
