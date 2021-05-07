@@ -2,7 +2,7 @@
 
 Bella is a simple programming language designed in a Programming Language Semantics class.
 
-## Example
+## Examples
 
 ```
 let x = 3;
@@ -10,6 +10,19 @@ while x < 10 {
   print x;
   x = x + 2;
 }
+```
+
+```
+fun subtract x, y = x - y
+let g = subtract 3, 2
+print g
+```
+
+```
+fun squared base = base ** 2
+let c = 1 > 2 && ~(3 != 1)
+let g = c ? squared 5 : 5
+print g
 ```
 
 This program outputs 3 5 7 9
