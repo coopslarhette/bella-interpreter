@@ -1,7 +1,7 @@
 const body2State = (body) => ([memory, output]) =>
   body.reduce(([m, o], s) => S(s)([m, o]), [memory, output])
 
-function interpret(program) {
+export function interpret(program) {
   return P(program)
 }
 
@@ -162,27 +162,27 @@ class Unary {
   }
 }
 
-const program = (s) => new Program(s)
-const vardec = (i, e) => new VariableDeclaration(i, e)
-const print = (e) => new PrintStatement(e)
-const whileLoop = (c, b) => new WhileStatement(c, b)
-const funcdec = (n, p, b) => new FunctionDeclaration(n, p, b)
-const conditional = (c, f, s) => new Conditional(c, f, s)
-const assign = (t, s) => new Assignment(t, s)
-const call = (n, a) => new Call(n, a)
-const plus = (x, y) => new Binary('+', x, y)
-const minus = (x, y) => new Binary('-', x, y)
-const times = (x, y) => new Binary('*', x, y)
-const remainder = (x, y) => new Binary('%', x, y)
-const power = (x, y) => new Binary('**', x, y)
-const eq = (x, y) => new Binary('==', x, y)
-const noteq = (x, y) => new Binary('!=', x, y)
-const less = (x, y) => new Binary('<', x, y)
-const lesseq = (x, y) => new Binary('<=', x, y)
-const greater = (x, y) => new Binary('>', x, y)
-const greatereq = (x, y) => new Binary('>=', x, y)
-const and = (x, y) => new Binary('&&', x, y)
-const or = (x, y) => new Binary('||', x, y)
+export const program = (s) => new Program(s)
+export const vardec = (i, e) => new VariableDeclaration(i, e)
+export const print = (e) => new PrintStatement(e)
+export const whileLoop = (c, b) => new WhileStatement(c, b)
+export const funcdec = (n, p, b) => new FunctionDeclaration(n, p, b)
+export const conditional = (c, f, s) => new Conditional(c, f, s)
+export const assign = (t, s) => new Assignment(t, s)
+export const call = (n, a) => new Call(n, a)
+export const plus = (x, y) => new Binary('+', x, y)
+export const minus = (x, y) => new Binary('-', x, y)
+export const times = (x, y) => new Binary('*', x, y)
+export const remainder = (x, y) => new Binary('%', x, y)
+export const power = (x, y) => new Binary('**', x, y)
+export const eq = (x, y) => new Binary('==', x, y)
+export const noteq = (x, y) => new Binary('!=', x, y)
+export const less = (x, y) => new Binary('<', x, y)
+export const lesseq = (x, y) => new Binary('<=', x, y)
+export const greater = (x, y) => new Binary('>', x, y)
+export const greatereq = (x, y) => new Binary('>=', x, y)
+export const and = (x, y) => new Binary('&&', x, y)
+export const or = (x, y) => new Binary('||', x, y)
 
 // [ 2 ]
 console.log(
@@ -210,8 +210,8 @@ console.log(
     ])
   )
 )
-// [ 3, 10, 1, 25 ]
 
+// [ 3, 10, 1, 25 ]
 console.log(
   interpret(
     program([
@@ -225,7 +225,7 @@ console.log(
 )
 
 console.log(
-  P(
+  interpret(
     program([
       vardec('x', 3),
       whileLoop(less('x', 4), [print('x'), assign('x', plus('x', 1))]),
@@ -234,7 +234,7 @@ console.log(
 )
 
 console.log(
-  P(
+  interpret(
     program([
       vardec('x', 3),
       whileLoop(less('x', 5), [print('x'), assign('x', plus('x', 1))]),
@@ -243,7 +243,7 @@ console.log(
 )
 
 console.log(
-  P(
+  interpret(
     program([
       vardec('x', 3),
       vardec('y', plus('x', 10)),
@@ -256,7 +256,7 @@ console.log(
 )
 
 console.log(
-  P(
+  interpret(
     program([
       vardec('x', 3),
       vardec('y', plus('x', 10)),
