@@ -11,12 +11,14 @@ while x < 10 {
   x = x + 2;
 }
 ```
+This program outputs 3 5 7 9
 
 ```
 fun subtract x, y = x - y
 let g = subtract 3, 2
 print g
 ```
+This program outputs 1
 
 ```
 fun squared base = base ** 2
@@ -24,8 +26,7 @@ let c = 1 > 2 && ~(3 != 1)
 let g = c ? squared 5 : 5
 print g
 ```
-
-This program outputs 3 5 7 9
+This program outputs 5
 
 ## Abstract Syntax
 
