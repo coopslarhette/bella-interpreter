@@ -118,7 +118,7 @@ console.log(
 )
 ```
 
-bella.js currently exports the following functions to import and use within other .js files:
+[bella.js](src/bella.js) currently exports the following functions to import and use within other .js files:
 
 ```javascript
 // interprets AST nodes
